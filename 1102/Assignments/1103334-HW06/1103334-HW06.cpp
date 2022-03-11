@@ -2,7 +2,7 @@
 #include <vector>
 using namespace std;
 
-string suits[] = { "¶Â³³","±öªá","·R¤ß","¤è¶ô" };
+string suits[] = { "æ¢…èŠ±","é»‘æ¡ƒ","ç´…å¿ƒ","æ–¹å¡Š" };
 string faces[] = { "A","2","3","4","5","6","7","8","9","J","Q","K" };
 
 class Card
@@ -15,21 +15,26 @@ private:
 	int suit, face;
 };
 
-
+// default constructor 
+// set the suit and face
 Card::Card(int s, int f)
 {
 	suit = s;
 	face = f;
 }
 
+// get suit item
 int Card::getSuit(int i)
 {
 	return suit;
 }
+
+// get face item
 int Card::getFace(int i)
 {
 	return face;
 }
+
 class Cards
 {
 private:
@@ -40,9 +45,8 @@ public:
 	void show();
 };
 
-
-
-
+// Cards default constructor
+// put 52 cards to cards 
 Cards::Cards()
 {
 	for (int face = 0; face < 13; face++)
@@ -56,21 +60,23 @@ Cards::Cards()
 
 }
 
+// show each cards
 void Cards::show()
 {
 	for (int i = 0; i < 52; i++)
 		cout << suits[cards[i].getSuit(i)] << " " << faces[cards[i].getFace(i)] << endl;;
 }
 
-
+// shuffle the card
 void Cards::shuffle()
 {
+	// init the cards order 
 	int order[52] = {};
 	for (int i = 0; i < 52; i++)
 		order[i] = i;
 
 	srand(time(NULL));
-
+	// shuffle the cards
 	for (int i = 0; i < 52; i++)
 	{
 		int buffer = rand() % 52;
@@ -80,7 +86,7 @@ void Cards::shuffle()
 		order[buffer] = t;
 	}
 
-
+	// get the top six card
 	for (int i = 0; i < 6; i++)
 		cout << suits[cards[order[i]].getSuit(order[i])] << " " << faces[cards[order[i]].getFace(order[i])] << endl;;
 }
