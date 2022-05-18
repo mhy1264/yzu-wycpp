@@ -13,61 +13,9 @@ public:
 	virtual void setNextPin(bool next) = 0;;
 
 protected:
-	bool result =false;
+	bool result = false;
 };
 
-class SRGate :public LogicGate
-{
-public:
-	SRGate(bool P1, bool P2, bool P3)
-	{
-		p1 = P1;
-		p2 = P2;
-		p3 = P3;
-	}
-	
-	SRGate(bool P1, bool P2)
-	{
-		p1 = P1;
-		p2 = P2;
-		p3 = false;
-	}
-
-	bool performLogicGate()
-	{
-		if (p1==0 && p2==0)
-			if (p3 == 0)
-				result = false;
-			else
-				result = true;
-
-		if (p1==1 && p2==0)
-			result = true;
-
-		if (p1==0 && p2==1)
-			result = false;
-
-		return result;
-	}
-	
-	void setNextPin(bool next)
-	{
-		p3 = p2;
-		p2 = p1;
-		p1 = next;
-	}
-
-	bool getOutput()
-	{
-		result = performLogicGate();
-		//cout << "getOutput in SR " << result << endl;;
-		printf("%d %d %d ",p1, p2, p3);
-		return result;
-	}
-		
-private:
-	bool p1=false, p2=false, p3=false;
-};
 
 class Unary :public LogicGate
 {
@@ -150,8 +98,26 @@ public:
 	}
 };
 
+class Connector
+{
+public:
+	Connector(LogicGate* fgate, LogicGate* tgate)
+	{
+		fromGate = fgate;
+		toGate = tgate;
+		tgate->setNextPin(fromGate->getOutput());
+	}
+private:
+	LogicGate* fromGate, * toGate;
+};
+
 class NOR :public binary
 {
+public:
+	NOR()
+	{
+		;
+	}
 	bool performLogicGate()
 	{
 		if (x + y == 1)
@@ -169,17 +135,54 @@ class NOR :public binary
 	}
 };
 
-class Connector
+class SRGate :public LogicGate
 {
 public:
-	Connector(LogicGate* fgate, LogicGate* tgate)
+	SRGate(bool P1, bool P2, bool P3)
 	{
-		fromGate = fgate;
-		toGate = tgate;
-		tgate->setNextPin(fromGate->getOutput());
+		p1 = P1;
+		p2 = P2;
+		p3 = P3;
 	}
+
+	SRGate(bool P1, bool P2)
+	{
+		p1 = P1;
+		p2 = P2;
+		p3 = false;
+	}
+
+	bool performLogicGate()
+	{
+		NOR nor1;
+		nor1.setNextPin(p1);
+		nor1.setNextPin(p2);
+
+		NOR nor2;
+
+		Connector Conn1(&nor1, &nor2);
+		nor2.setNextPin(p3);
+
+		return nor2.performLogicGate();
+
+	}
+
+	void setNextPin(bool next)
+	{
+		p3 = p2;
+		p2 = p1;
+		p1 = next;
+	}
+
+	bool getOutput()
+	{
+		result = performLogicGate();
+		printf("%d %d %d ", p1, p2, p3);
+		return result;
+	}
+
 private:
-	LogicGate* fromGate, * toGate;
+	bool p1 = false, p2 = false, p3 = false;
 };
 
 int main()
