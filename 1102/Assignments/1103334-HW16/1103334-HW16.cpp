@@ -1,7 +1,8 @@
 #include<iostream>
 using namespace std;
 
-int id = 0;
+int stdId = 0;
+int proId = 0;
 
 class Person
 {
@@ -9,21 +10,18 @@ public:
 
 	void getData()
 	{
-		cout << _id << " " << _name << " " << _age << " ";
+		cout << " " << _name << " " << _age << " ";
 	}
 
 	void putData()
 	{
-		cin>>_name;
+		cin >> _name;
 		cin >> _age;
-		_id = ++id;
 	}
 
 protected:
 	char _name[10];
 	int _age;
-	int _id;
-
 };
 
 class Professor :public Person
@@ -33,16 +31,19 @@ public:
 	void getData()
 	{
 		Person::getData();
-		cout << _publications << endl;;
+		cout  << _publications << " "<<_proId<<endl;
 	}
 
 	void putData()
 	{
 		Person::putData();
+		_proId = ++proId;
 		cin >> _publications;
 	}
+
 private:
 	int _publications;
+	int _proId;
 };
 
 class Student :public Person
@@ -57,22 +58,22 @@ public:
 			sum += _marks[i];
 
 		Person::getData();
-		cout << sum << endl;;
+		cout <<   sum <<" " << _stdId <<endl;
 	}
 
 	void putData()
 	{
-		
-		Person::putData();
 
+		Person::putData();
+		_stdId =++stdId;
 		for (int i = 0; i < 6; i++)
 			cin >> _marks[i];
 	}
 
 private:
 	int _marks[6];
+	int _stdId;
 };
-
 
 int main()
 {
@@ -94,7 +95,7 @@ int main()
 			temp.putData();
 			stu[i] = temp;
 		}
-		if (t==1)
+		if (t == 1)
 		{
 			loc[i] = 2;
 			Professor temp;
