@@ -31,6 +31,10 @@ protected:
 class NOT :public Unary
 {
 public:
+	NOT(bool op)
+	{
+		x=op;
+	}
 	bool performLogicGate()
 	{
 		if (x == true)
@@ -166,9 +170,47 @@ public:
 	}
 };
 
-class SRGate:public LogicGate
+class SRGate :public LogicGate
 {
 public:
+	/* 
+   					  ___  
+	                 |   \  
+		s ---|>o-----|    }o--------------Q
+		       ------|___/      |
+				|              /
+				 \            /
+				  \          /
+				   \        /
+				    \      /
+					 \    /
+					  \  /
+					   \/
+					   /\
+					  /	 \
+					 /    \
+				    /	   \
+				   /	    \
+				  /		     \
+				 / 	          \
+				/	  ___      \
+			   |     |   \      |         _
+		       ------|    }o------------- Q
+		r ---|>o-----|___/	
+
+		-------------------------------------
+		|   s   |   r   |  Q(T) |  Q(t+1)   | 
+ 		|	----+-------+-------+--------   |
+		|	0   |   0   |   0   |     0     | 
+		|	0   |   0   |   1   |     1     |
+		|	0   |   1   |   0   |     0     |
+		|	0   |   1   |   1   |     0     |
+		|	1   |   0   |   0   |     1     |
+		|	1   |   0   |   1   |     1     |
+		|	1   |   1   |   0   | Undefined |
+		|	1   |   1   |   1   | Undefined |
+		-------------------------------------
+	*/
 	SRGate(bool p1, bool p2)
 	{
 		s = p1;
@@ -185,15 +227,17 @@ public:
 
 	bool performLogicGate()
 	{
-		NAND nand1(q, !r);
+		NOT Nr(r);
+		NOT Ns(s);
+		NAND nand1(q, Nr.getOutput());
 		NAND nand2;
 		Connector conn(&nand1, &nand2);
-		nand2.setNextPin(!s);
+		nand2.setNextPin(Ns.getOutput());
 		result = nand2.performLogicGate();
 		return result;
 
 	}
-	
+
 	bool getOutput()
 	{
 		AND input(s, r);
@@ -204,7 +248,7 @@ public:
 		}
 		else
 		{
-			cout  << result << endl;
+			cout << result << endl;
 		}
 		return result;
 	}
